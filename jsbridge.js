@@ -69,43 +69,82 @@
                         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                         appId: weChatCfg.appid, // 必填，公众号的唯一标识
                         timestamp: weChatCfg.timestamp, // 必填，生成签名的时间戳
-                        nonceStr: weChatCfg.nonceStr, // 必填，生成签名的随机串
-                        signature: weChatCfg.signature,// 必填，签名，见附录1
-                        jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'openLocation', 'getLocation', 'scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2 onMenuShareAppMessage showOptionMenu
+this.share = function () {
+            // if (isBridge) {
+            //     JF.navigator_setShareInfo(JSON.stringify({
+            //         title: shareInfo.title,
+            //         desc: shareInfo.desc,
+            //         icon: shareInfo.icon,
+            //         link: shareInfo.link
+            //     }), getUniqFn(function (d) {
+            //         callback(d);
+            //         shareMask.hide().off('tap.share_mask');
+            //     }));
+            // } else
+            if (isApp) {
+                window.location = '/share_action?title=' + encodeURIComponent(shareInfo.title) + '&desc=' + encodeURIComponent(shareInfo.desc) + '&link=' + encodeURIComponent(shareInfo.link) + '&icon=' + encodeURIComponent(shareInfo.icon);
+            } else {
+                var shareMask = $('.share_mask');
+                if (shareMask.length) {
+                    shareMask.show().on('tap.share_mask', function () {
+                        shareMask.hide().off('tap.share_mask');
                     });
-                    var cfg = {
-                        title: title,
-                        desc: desc,
-                        link: link,
-                        imgUrl: icon,
-                        success: function () {
-                            callback();
-                            shareMask.hide().off('tap.share_mask');
-                        },
-                        cancel: function () {
-                            shareMask.hide().off('tap.share_mask');
-                        }
-                    };
-                    wx.showOptionMenu();
-                    wx.ready(function () {
-                        wx.onMenuShareAppMessage(cfg);
-                        wx.onMenuShareTimeline(cfg);
-                        wx.onMenuShareQQ(cfg);
-                        wx.onMenuShareWeibo(cfg);
-                        wx.onMenuShareQZone(cfg);
+                } else {
+                    shareMask = $('<div class="share_mask"></div>');
+                    $('body').append(shareMask);
+                    shareMask.show().on('tap.share_mask', function () {
+                        shareMask.hide().off('tap.share_mask');
                     });
-                    if (shareMask.length) {
-                        shareMask.show().on('tap.share_mask', function () {
-                            shareMask.hide().off('tap.share_mask');
-                        });
-                    } else {
-                        shareMask = $('<div class="share_mask"></div>');
-                        $('body').append(shareMask);
-                        shareMask.show().on('tap.share_mask', function () {
-                            shareMask.hide().off('tap.share_mask');
-                        });
-                    }
                 }
+            }
+        };
+        this.setShareInfo=function(options){
+            shareInfo=options;
+            var title = options.title || '跟我来摇旺赚钱吧，100元返现券、14%新手专享产品和万元体验金等你来拿~',
+                desc = options.desc || '不会理财的人不漂亮！',
+                link = options.link || location.href,
+                icon = options.icon || 'https://wz.91yaowang.com/weizhan/res/images/headImg.jpg',
+                callback = options.callback || function () {};
+            $.sync({
+                method: 'get',
+                url: location.origin + '/weizhan/oauth/config',
+                data: {url: encodeURIComponent(location.href.split('#')[0])},
+                dataType: 'json',
+                success: function (d) {
+                    _initWeChat(d);
+                }
+            });
+
+            function _initWeChat(weChatCfg) {
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: weChatCfg.appid, // 必填，公众号的唯一标识
+                    timestamp: weChatCfg.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: weChatCfg.nonceStr, // 必填，生成签名的随机串
+                    signature: weChatCfg.signature,// 必填，签名，见附录1
+                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'openLocation', 'getLocation', 'scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2 onMenuShareAppMessage showOptionMenu
+                });
+                var cfg = {
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: icon,
+                    success: function () {
+                        callback();
+                        shareMask.hide().off('tap.share_mask');
+                    },
+                    cancel: function () {
+                        shareMask.hide().off('tap.share_mask');
+                    }
+                };
+                wx.showOptionMenu();
+                wx.ready(function () {
+                    wx.onMenuShareAppMessage(cfg);
+                    wx.onMenuShareTimeline(cfg);
+                    wx.onMenuShareQQ(cfg);
+                    wx.onMenuShareWeibo(cfg);
+                    wx.onMenuShareQZone(cfg);
+                });
             }
         };
         this.toList = function () {
