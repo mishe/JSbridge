@@ -35,7 +35,7 @@
             var title = options.title || '跟我来摇旺赚钱吧，100元返现券、14%新手专享产品和万元体验金等你来拿~',
                 desc = options.desc || '不会理财的人不漂亮！',
                 link = options.link || location.href,
-                icon = options.icon || 'https://wz.91yaowang.com/weizhan/res/images/headImg.jpg',
+                icon = options.icon || '/images/headImg.jpg',
                 callback = options.callback || function () {
                     },
                 shareMask = $('.share_mask');
@@ -55,7 +55,6 @@
             } else {
                 $.ajax({
                     method: 'get',
-                    // url: 'https://app.91yaowang.com/weizhan/oauth/config',
                     url: location.origin + '/weizhan/oauth/config',
                     data: {url: location.href},
                     dataType: 'json',
@@ -103,12 +102,12 @@ this.share = function () {
             var title = options.title || '跟我来摇旺赚钱吧，100元返现券、14%新手专享产品和万元体验金等你来拿~',
                 desc = options.desc || '不会理财的人不漂亮！',
                 link = options.link || location.href,
-                icon = options.icon || 'https://wz.91yaowang.com/weizhan/res/images/headImg.jpg',
+                icon = options.icon || '/images/headImg.jpg',
                 callback = options.callback || function () {};
             $.sync({
                 method: 'get',
                 url: location.origin + '/weizhan/oauth/config',
-                data: {url: encodeURIComponent(location.href.split('#')[0])},
+                data: {url: location.href.split('#')[0]},
                 dataType: 'json',
                 success: function (d) {
                     _initWeChat(d);
@@ -151,7 +150,6 @@ this.share = function () {
             if (isBridge) {
                 JF.passport_productList();
             } else if (isApp) {
-                // window.location='/weizhan/product/productClassifyList';
                 window.location = '/productList';
             } else {
                 window.location = '/weizhan/#product';
@@ -215,7 +213,7 @@ this.share = function () {
                 // $.setAppTitle(title);
                 // hack在微信IOS webview中无法修改document.title的情况
                 if ($.isWeixin() && $.isIOS()) {
-                    var $iframe = $('<iframe src="https://static.91yaowang.com/yaowang/dist/source/mall/images/9e3e8cf0.png" style="border: 0;outline: 0"></iframe>');
+                    var $iframe = $('<iframe src="/images/9e3e8cf0.png" style="border: 0;outline: 0"></iframe>');
                     $iframe.on('load', function () {
                         setTimeout(function () {
                             $iframe.off('load').remove();
@@ -249,7 +247,6 @@ this.share = function () {
                 yaobao(id)
             } else {
                 $.sync({
-                    // url: 'https://app.91yaowang.com/app/webservice/v2/newProductList',
                     url: location.origin + '/app/webservice/v2/newProductList',
                     type: 'post',
                     data: {
