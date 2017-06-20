@@ -1,0 +1,64 @@
+URI 参数字段及相应的规范
+
+H5传值给APP
+固定URL：http://...../toApp?action={JSON}
+
+JSON 结构体
+主字段Json对象	类型	说明
+type	string	操作指令：如分享（share）
+data	json对象	
+具体的参数，根据指令不同，有不用的数据字段
+
+data 举例：分享
+{
+link： '分享的链接地址'，
+icon：'分享的图标',
+title：'分享的标题'
+desc：'分享描述'
+}
+完整的action为：
+action={
+type:'share',
+data:
+{
+link： '分享的链接地址'，
+icon：'分享的图标',
+title：'分享的标题'
+desc：'分享描述'
+}
+}
+
+APP 回调H5
+回调地址为之前发起请求的地址已A代替：a?isApp=1&callback={JSON}
+JSON 结构体
+主字段Json对象	类型	说明
+statue	int	0代表成功，其他代表失败
+data	json对象	
+具体的参数，根据指令不同，有不用的数据字段
+msg	string	status非0是 ，为描述字符串
+data 举例：分享
+{
+type：‘wChat’，
+desc:'微信朋友圈'，
+....
+}
+
+完整范例：
+callback={
+statue：0,
+data：
+{
+type：‘wChat’，
+desc:'微信朋友圈'，
+....
+}
+msg：‘’
+}
+
+H5 识别APP内嵌webview 
+前提是H5端 loginToken存储在localStorage：A？isApp=1&loginToken=sss
+如果loginToken 存储在cookie中：A？isApp=1,  loginToken,需要app端注入webview
+
+主字段	主字段Json对象	类型	说明
+isApp	无	bool	是否app访问html网页
+loginToken	无	string	登录用户的token
